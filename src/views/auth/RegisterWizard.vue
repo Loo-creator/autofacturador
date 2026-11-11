@@ -9,8 +9,8 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useToast } from '@/composables/useToast'
 import { REGIMENES } from '@/utils/satCatalogs'
-import { validarRFC, validarCP, validarEmail } from '@/utils/rfcValidator'
-import { validarReceptor, tipoPersona, regimenesPara, usosDisponibles as usosPorRegimen } from '@/utils/cfdiValidations'
+import { validarEmail } from '@/utils/rfcValidator'
+import { validarReceptor, tipoPersona, regimenesPara } from '@/utils/cfdiValidations'
 import BrandMark from '@/components/ui/BrandMark.vue'
 import * as negocioSvc from '@/services/negocio.service'
 
@@ -165,7 +165,7 @@ async function submit() {
             <SelectField id="reg-regimen" v-model="form.regimen">
               <option v-for="r in regimenesDisponibles" :key="r.id" :value="r.id">{{ r.id }} - {{ r.nombre }}</option>
             </SelectField>
-            <p v-if="erroresStep.includes(erroresStep[0]) && erroresStep.length" class="field-error">{{ erroresStep[0] }}</p>
+            <p v-if="erroresStep.length" class="field-error">{{ erroresStep[0] }}</p>
             <div v-else class="hint">El RFC determina si eres persona física o moral y qué régimen puedes usar.</div>
           </div>
           <div class="field float">

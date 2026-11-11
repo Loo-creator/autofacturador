@@ -4,28 +4,57 @@ import AppLayout from '@/components/layout/AppLayout.vue'
 import StatCard from '@/components/ui/StatCard.vue'
 import EmptyState from '@/components/ui/EmptyState.vue'
 import StatusBadge from '@/components/ui/StatusBadge.vue'
+import BaseModal from '@/components/ui/BaseModal.vue'
+import SelectField from '@/components/ui/SelectField.vue'
+import FacturaGlobalWizard from '@/components/cfdi/FacturaGlobalWizard.vue'
 import { useFacturasStore } from '@/stores/facturas'
 import { useNegociosStore } from '@/stores/negocios'
+import { useToast } from '@/composables/useToast'
 import { formatMoney, formatDate, formatDateTime } from '@/utils/formatters'
 import { REGIMENES, USOS_CFDI, FORMAS_PAGO, METODOS_PAGO } from '@/utils/satCatalogs'
 import { listAuditoria } from '@/services/negocio.service'
+import { bloquearTicketsPorGlobal } from '@/services/ticket.service'
 
 const facturas = useFacturasStore(); const negocios = useNegociosStore()
+const toast = useToast()
 const tab = ref('globales')
 const auditoria = ref([])
+const showWizard = ref(false)
+const negocioSel = ref('')
 
 onMounted(async () => { facturas.fetch(); negocios.fetch(); const r = await listAuditoria(); if(r.ok) auditoria.value = r.data })
 
 const globales = computed(() => facturas.items.filter(f => f.tipo === 'GLOBAL' || f.receptor?.rfc === 'XAXX010101000'))
 const totalMonto = computed(() => facturas.items.reduce((s,f)=>s+Number(f.total||0),0))
 const cats = [{name:'Regímenes', items:REGIMENES},{name:'Usos CFDI', items:USOS_CFDI},{name:'Formas de pago', items:FORMAS_PAGO},{name:'Métodos de pago', items:METODOS_PAGO}]
+const negocioActivo = computed(() => negocios.items.find(n => n.id === negocioSel.value) || {})
+const emisorActivo = computed(() => ({ rfc: negocioActivo.value.rfc, nombre: negocioActivo.value.nombre, regimen: negocioActivo.value.regimen, cp: negocioActivo.value.cp }))
+
+function abrirWizard() {
+  negocioSel.value = negocios.items[0]?.id || ''
+  showWizard.value = true
+}
+
+async function submitGlobal(payload) {
+  if (!negocioSel.value) return toast.error('Selecciona un negocio.')
+  const folios = payload.foliosConsolidados || []
+  const r = await facturas.timbrarGlobal({ ...payload, negocioId: negocioSel.value })
+  if (!r.ok) return toast.error(r.error || 'No se pudo timbrar la factura global')
+  if (folios.length) await bloquearTicketsPorGlobal(folios, r.data.id)
+  showWizard.value = false
+  toast.success({
+    title: 'Factura global timbrada',
+    message: `Folio ${r.data.serie}-${r.data.folio} · ${folios.length} ticket(s) consolidado(s)`,
+  })
+  await facturas.fetch()
+}
 </script>
 
 <template>
   <AppLayout>
     <div class="page-header">
       <div><h1 class="page-title">Administración</h1><p class="page-subtitle">Métricas globales, facturas consolidadas y control de plataforma</p></div>
-      <button class="btn btn-primary"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Emitir factura global</button>
+      <button class="btn btn-primary" @click="abrirWizard"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Emitir factura global</button>
     </div>
 
     <div class="grid kpi-grid section-block">
@@ -67,5 +96,20 @@ const cats = [{name:'Regímenes', items:REGIMENES},{name:'Usos CFDI', items:USOS
         </div>
       </div>
     </div>
+    <BaseModal :open="showWizard" title="Emitir factura global" size="lg" @close="showWizard = false">
+      <div class="field" style="margin-bottom:16px">
+        <label for="adm-negocio">Negocio emisor</label>
+        <SelectField id="adm-negocio" v-model="negocioSel">
+          <option v-for="n in negocios.items" :key="n.id" :value="n.id">{{ n.nombre }} ({{ n.rfc }})</option>
+        </SelectField>
+      </div>
+      <FacturaGlobalWizard
+        v-if="negocioSel"
+        :emisor="emisorActivo"
+        :negocio-id="negocioSel"
+        @submit="submitGlobal"
+        @cancel="showWizard = false"
+      />
+    </BaseModal>
   </AppLayout>
 </template>

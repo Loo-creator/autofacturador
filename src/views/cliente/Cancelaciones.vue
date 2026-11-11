@@ -15,7 +15,7 @@ import { useToast } from '@/composables/useToast'
 import { formatMoney, formatDate } from '@/utils/formatters'
 import {
   filtrarCancelaciones, resumenCancelaciones,
-  MOTIVOS, ESTADOS_CFDI, RANGOS_MONTO_CANCELACION, nombreMotivo,
+  MOTIVOS, ESTADOS_CFDI, RANGOS_MONTO_CANCELACION,
 } from '@/utils/cancelacionFilters'
 
 const auth = useAuthStore()

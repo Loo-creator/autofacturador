@@ -15,7 +15,6 @@ import AccountSecurity from '@/components/ui/AccountSecurity.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useToast } from '@/composables/useToast'
 import { REGIMENES } from '@/utils/satCatalogs'
-import { validarCP, validarEmail } from '@/utils/rfcValidator'
 import { validarReceptor, tipoPersona, regimenesPara } from '@/utils/cfdiValidations'
 import * as svc from '@/services/negocio.service'
 

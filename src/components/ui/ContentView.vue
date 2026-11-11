@@ -19,7 +19,8 @@ const props = defineProps({
   loading: { type: Boolean, default: false },
   skeletonRows: { type: Number, default: 5 },
   // 'auto' = deja elegir al usuario | 'table' | 'cards'
-  view: { type: String, default: 'auto' },  emptyTitle: { type: String, default: 'No hay resultados' },
+  view: { type: String, default: 'auto' },
+  emptyTitle: { type: String, default: 'No hay resultados' },
   emptySubtitle: { type: String, default: 'Intenta ajustar tu búsqueda o filtros.' },
   caption: { type: String, default: '' },
   // Configuración opcional de la card

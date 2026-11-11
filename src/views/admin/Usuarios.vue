@@ -13,7 +13,6 @@ import ActionMenu from '@/components/ui/ActionMenu.vue'
 import BaseModal from '@/components/ui/BaseModal.vue'
 import { useToast } from '@/composables/useToast'
 import { useNegociosStore } from '@/stores/negocios'
-import { formatMoney } from '@/utils/formatters'
 
 const store = useClientesStore()
 const toast = useToast()

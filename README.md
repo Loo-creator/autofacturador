@@ -30,9 +30,10 @@ git push -u origin main
 https://<TU_USUARIO>.github.io/<TU_REPO>/
 ```
 
-> **Rutas relativas:** `vite.config.js` usa `base: './'` y el router `createWebHistory(import.meta.env.BASE_URL)`,
+> **Rutas relativas:** `vite.config.js` usa `base: './'` y el router `createWebHashHistory()`,
 > por eso funciona igual en la raíz del dominio (`usuario.github.io`) que en un subpath
 > (`usuario.github.io/repo/`). No hay que cambiar nada al publicar.
+> Las URLs llevan `#` (p. ej. `/#/login`), requisito para servir una SPA sin servidor.
 
 **Despliegue manual** (sin Actions):
 
@@ -88,9 +89,9 @@ src/
 ├── stores/           # Pinia: auth, negocios, clientes, facturas, productos, ui
 ├── mocks/            # Datos semilla + dbSeed (con migración) + api.mock (localStorage)
 ├── services/         # Capa única de datos (HOY mocks, MAÑANA APIs reales, misma firma)
-├── composables/      # useAuth, useCfdi, useToast, useTheme, useTicket, useEmision, useMediaQuery
+├── composables/      # useCfdi, useToast, useTheme, useTicket, useEmision, useMediaQuery
 ├── components/
-│   ├── ui/           # BaseModal, DataTable, FilterBar, ContentView, FilterToolbar,
+│   ├── ui/           # BaseModal, DataTable, FilterBar, ContentView,
 │   │                 # FilterDrawer, ActionMenu, FacturaAcciones, SelectField,
 │   │                 # StatCard, StatusBadge, Toast, InlineBanner, EmptyState
 │   ├── layout/       # AppLayout (grid principal), Sidebar, TopbarNav
@@ -270,8 +271,8 @@ se convierte automáticamente en cards apiladas. La preferencia del usuario se p
 - Cada función incluye JSDoc `@future` con el endpoint real esperado (ej. `GET /api/v1/negocios/:id/facturas`).
 - Los services consumen `src/mocks/*` y `api.mock.js` (latencia simulada + persistencia en `localStorage` clave `Autofacturación_db_v1`).
 - Variables de entorno (`.env`):
-  - `VITE_USE_MOCKS=true|false` (bandera prevista para alternar implementación)
-  - `VITE_API_BASE_URL=/api/v1`
+  - `VITE_USE_MOCKS=true|false` (reservada; la capa de datos aún no la consume)
+  - `VITE_API_BASE_URL=/api/v1` (reservada para la futura implementación real)
 - **Para migrar a APIs reales:** reimplementar las funciones en `services/` usando `fetch/axios` contra `VITE_API_BASE_URL` manteniendo la misma firma y contrato `{ ok, data, error }`. Los stores/componentes no requieren cambios.
 
 ## Datos semilla
@@ -368,23 +369,15 @@ con comparativo campo por campo, detección de homonimia y aviso de CSF con más
 
 ## Verificación
 
-El proyecto trae un arnés de pruebas que corre en Node (sin navegador) usando
-`@vue/server-renderer` + el compilador de Vue:
-
-- **Smoke test**: renderiza las **21 vistas** y captura los *warnings* de Vue (0 esperados).
-- **Análisis estático con el compilador**: el template compilado expone `_ctx.X` para todo lo
-  que **no** está en el scope del `<script setup>`. Comparando contra las props declaradas se
-  detectan referencias no definidas (el bug `buscar is not defined` era de esta clase).
-- **Auditoría de props**: Vue **ignora en silencio** las props que no existen, así que un
-  `:show-monto` mal escrito deja de filtrar sin avisar. El auditor compara cada `:prop` y cada
-  `@event` contra las props/emits declarados por el componente.
-- Verifica además que las rutas del menú existan en el router, que los accesos a store sean
-  válidos y que no haya imports sin usar.
+Actualmente el proyecto **no incluye una suite de pruebas automatizada**. La validación
+disponible es la compilación de producción:
 
 ```bash
-npm run build            # compila
-# las pruebas se ejecutan bundlando el arnés con vite (build SSR) y ejecutándolo con node
+npm run build
 ```
+
+> Si se añade un linter o runner de tests, conviene registrar los comandos en `package.json`
+> y documentarlos aquí.
 
 ## Certificados CSD
 

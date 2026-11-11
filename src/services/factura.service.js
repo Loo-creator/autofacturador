@@ -18,13 +18,6 @@ export async function listFacturas(filters = {}) {
   return response(true, items)
 }
 
-/** @future GET /api/v1/facturas/:id */
-export async function getFactura(id) {
-  await delay()
-  const f = (ensure().facturas || []).find(x => x.id === id || x.uuid === id)
-  return f ? response(true, f) : response(false, null, 'Factura no encontrada')
-}
-
 /** @future POST /api/v1/facturas/timbrar */
 export async function timbrarFactura(payload) {
   await delay(500)

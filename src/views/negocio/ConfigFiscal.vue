@@ -7,7 +7,6 @@ import SelectField from '@/components/ui/SelectField.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useNegociosStore } from '@/stores/negocios'
-import { useUiStore } from '@/stores/ui'
 import { useToast } from '@/composables/useToast'
 import { REGIMENES } from '@/utils/satCatalogs'
 import CsdPanel from '@/components/cfdi/CsdPanel.vue'
@@ -15,7 +14,6 @@ import AccountSecurity from '@/components/ui/AccountSecurity.vue'
 
 const auth = useAuthStore()
 const store = useNegociosStore()
-const ui = useUiStore()
 const toast = useToast()
 
 const negId = computed(() => auth.user?.negocioId)
@@ -27,7 +25,7 @@ const guardando = ref(false)
 function cambiarNegocio(id) {
   const n = store.items.find(x => x.id === id)
   if (!n) return
-  form.value = { ...n }
+  form.value = { prefijoAdicional: '', incremento: 1, ...n }
 }
 
 onMounted(async () => {
@@ -36,7 +34,7 @@ onMounted(async () => {
   const id = negId.value || store.items[0]?.id
   const n = store.items.find(x => x.id === id)
   if (n) {
-    form.value = { ...n }
+    form.value = { prefijoAdicional: '', incremento: 1, ...n }
   }
 })
 
@@ -108,8 +106,8 @@ async function save() {
       <div class="card-body form-grid" style="max-width:720px">
         <div class="field"><label>Serie activa</label><input class="input" v-model="form.serie" placeholder="Ej. A, FAC, CAF" /></div>
         <div class="field"><label>Folio actual</label><input class="input" type="number" v-model.number="form.folio" /></div>
-        <div class="field"><label>Prefijo adicional</label><input class="input" placeholder="Opcional" /></div>
-        <div class="field"><label>Incremento</label><input class="input" type="number" value="1" /></div>
+        <div class="field"><label>Prefijo adicional</label><input class="input" v-model="form.prefijoAdicional" placeholder="Opcional" /></div>
+        <div class="field"><label>Incremento</label><input class="input" type="number" min="1" v-model.number="form.incremento" /></div>
         <div class="field span-2"><div class="hint">Los folios se asignan consecutivamente al timbrar cada comprobante. El siguiente folio será <strong>{{ (form.folio || 0) + 1 }}</strong>.</div></div>
       </div>
     </div>
@@ -141,19 +139,6 @@ async function save() {
 </template>
 
 <style scoped>
-
-
-/* Contraseña */
-.pass-errors {
-  margin-top: 16px; padding: 12px 14px; border-radius: 10px;
-  background: var(--danger-soft); border: 1px solid rgba(220,38,38,.18);
-}
-.pass-errors p { margin: 0; font-size: 13px; color: var(--danger); }
-.pass-errors p + p { margin-top: 3px; }
-
-@media (max-width: 640px) {
-}
-
 /* Sub-pestañas (mismo lenguaje que ClienteTabs) */
 .subtabs {
   display: flex; gap: 4px; padding: 5px;

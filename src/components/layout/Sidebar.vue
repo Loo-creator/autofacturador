@@ -187,8 +187,7 @@ watch(() => route.path, () => {
   -webkit-backdrop-filter: var(--blur-panel);
   border-right: 1px solid var(--glass-line);
   box-shadow: 4px 0 24px rgba(17,24,39,0.05);
-  transition: background-color .35s ease, border-color .35s ease;
-  transition: width .3s cubic-bezier(.4,0,.2,1), padding .3s cubic-bezier(.4,0,.2,1), transform .28s cubic-bezier(.4,0,.2,1);
+  transition: width .3s cubic-bezier(.4,0,.2,1), padding .3s cubic-bezier(.4,0,.2,1), transform .28s cubic-bezier(.4,0,.2,1), background-color .35s ease, border-color .35s ease;
   z-index: 30;
   overflow: hidden;
   font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;

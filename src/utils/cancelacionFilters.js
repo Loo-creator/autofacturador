@@ -27,10 +27,6 @@ export const RANGOS_MONTO_CANCELACION = [
   { value: '10000-', label: '$10,000 +' },
 ]
 
-export function nombreMotivo(id) {
-  return MOTIVOS_CANCELACION.find(m => m.id === id)?.nombre || '—'
-}
-
 /**
  * @param {Array} facturas
  * @param {object} f

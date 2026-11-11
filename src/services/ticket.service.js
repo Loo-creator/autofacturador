@@ -1,7 +1,7 @@
 import { ensureDb } from '@/mocks/dbSeed'
 import { ticketsSeed } from '@/mocks/tickets.mock'
 import { delay, saveDB, response } from '@/mocks/api.mock'
-import { evaluarTicket, ESTADO_TICKET, CODIGO_ERROR } from '@/utils/ticketPolicy'
+import { evaluarTicket, CODIGO_ERROR } from '@/utils/ticketPolicy'
 
 function ensure() {
   const db = ensureDb()
@@ -65,29 +65,6 @@ export async function listTickets(negocioId) {
     })
     .sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)))
   return response(true, items)
-}
-
-/**
- * Tickets aún no facturados del negocio (bandeja de pendientes).
- * @future GET /api/v1/negocios/:id/tickets?estado=pendiente
- */
-export async function listTicketsPendientes(negocioId) {
-  const res = await listTickets(negocioId)
-  if (!res.ok) return res
-  return response(true, res.data.filter(t => t.evaluacion.estado === ESTADO_TICKET.DISPONIBLE))
-}
-
-/** Marca el ticket como facturado (idempotencia: un folio = un CFDI). */
-export async function marcarTicketFacturado(ticketId, facturaId) {
-  await delay(120)
-  const db = ensure()
-  const ticket = (db.tickets || []).find(t => t.id === ticketId)
-  if (!ticket) return response(false, null, 'Ticket no encontrado', { codigo: CODIGO_ERROR.TICKET_NOT_FOUND })
-  ticket.estado = 'facturado'
-  ticket.facturaId = facturaId
-  ticket.facturadoEn = new Date().toISOString()
-  saveDB(db)
-  return response(true, ticket)
 }
 
 /** Bloquea folios consumidos por una factura global (cierre de mes). */

@@ -4,7 +4,7 @@
  * (AuthBackdrop, montado en App.vue) queda a la izquierda y no se desmonta
  * al navegar a /registro → la transición entre ambas es continua.
  */
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useToast } from '@/composables/useToast'
@@ -30,25 +30,20 @@ const roles = [
     email: 'admin@autofacturacion.mx', password: 'admin123',
     color: '#FB923C', ink: '#9A3412',
     glow: 'rgba(251,146,60,0.40)',
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 10-4-2.5-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>`,
   },
   {
     key: 'negocio', label: 'Negocio', desc: 'Emite y gestiona',
     email: 'negocio@demo.mx', password: 'negocio123',
     color: '#C084FC', ink: '#7E22CE',
     glow: 'rgba(192,132,252,0.40)',
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-5 9 5v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></svg>`,
   },
   {
     key: 'cliente', label: 'Cliente', desc: 'Consulta y solicita',
     email: 'cliente@demo.mx', password: 'cliente123',
     color: '#A855F7', ink: '#6B21A8',
     glow: 'rgba(168,85,247,0.40)',
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0116 0"/></svg>`,
   },
 ]
-
-const rolActual = computed(() => roles.find(r => r.key === selectedRole.value) || roles[2])
 
 function redirectByRole(role) {
   if (role === 'admin') return '/admin'

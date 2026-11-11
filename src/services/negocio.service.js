@@ -1,7 +1,6 @@
 import { ensureDb } from '@/mocks/dbSeed'
 import { delay, saveDB, response } from '@/mocks/api.mock'
 import { uid } from '@/utils/formatters'
-import { getTicketByFolio } from '@/services/ticket.service'
 
 function ensure() {
   return ensureDb()
@@ -9,8 +8,6 @@ function ensure() {
 
 /** @future GET /api/v1/negocios */
 export async function listNegocios() { await delay(); return response(true, ensure().negocios) }
-/** @future GET /api/v1/negocios/:id */
-export async function getNegocio(id) { await delay(); const n = ensure().negocios.find(x => x.id === id); return n ? response(true, n) : response(false, null, 'No encontrado') }
 /** @future POST /api/v1/negocios */
 export async function createNegocio(payload) { await delay(); const db = ensure(); const n = { id: uid('neg'), activo: true, folio: 1001, branding: { logo: 'N' }, ...payload }; db.negocios.push(n); saveDB(db); return response(true, n) }
 /** @future PUT /api/v1/negocios/:id */
@@ -67,43 +64,5 @@ export async function listUsuarios() {
   return response(true, all)
 }
 
-/** @future POST /api/v1/auditoria */
-export async function logAuditoria(entry) { await delay(100); const db = ensure(); db.auditoria.unshift({ id: uid('aud'), fecha: new Date().toISOString(), ...entry }); saveDB(db); return response(true, entry) }
 /** @future GET /api/v1/auditoria */
 export async function listAuditoria() { await delay(); return response(true, ensure().auditoria || []) }
-
-/**
- * Legacy: devolvía una "venta" sintética para cualquier folio.
- * Ahora delega en el catálogo real de tickets: si el folio no existe o venció,
- * devuelve el error de negocio correspondiente (TICKET_NOT_FOUND / TICKET_EXPIRED / ...).
- * @future GET /api/v1/ventas?negocioId=&folio=
- */
-export async function getVentaByFolio(folio, negocioId) {
-  const res = await getTicketByFolio(folio, negocioId ? { negocioId } : {})
-  if (!res.ok) return response(false, null, res.error, { codigo: res.codigo }, { contexto: res.contexto })
-
-  const { ticket, negocio } = res.data
-  return response(true, {
-    id: ticket.id,
-    folio: ticket.folio,
-    negocioId: ticket.negocioId,
-    emisor: {
-      rfc: negocio?.rfc,
-      nombre: negocio?.nombre,
-      regimen: negocio?.regimen,
-      cp: negocio?.cp,
-      serie: negocio?.serie,
-    },
-    conceptos: ticket.conceptos,
-    subtotal: ticket.subtotal,
-    impuestosTrasladados: ticket.impuestosTrasladados,
-    total: ticket.total,
-    fecha: ticket.fecha,
-    medioPago: ticket.medioPago,
-    formaPago: ticket.formaPago,
-    metodoPago: ticket.metodoPago,
-    usoCfdi: ticket.usoCfdi,
-    ticketId: ticket.id,
-    evaluacion: res.data.evaluacion,
-  }, null, { contexto: res.contexto })
-}

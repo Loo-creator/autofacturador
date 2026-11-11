@@ -228,11 +228,10 @@ const gridTemplate = computed(() => {
 }
 
 /* El icono es decorativo: el clic debe llegar al input */
-.fb-icon { pointer-events: none; flex-shrink: 0; }
+.fb-icon { width: 18px; height: 18px; color: var(--muted-2); pointer-events: none; flex-shrink: 0; }
 
 .fb-input {
   flex: 1;
-  min-width: 0;
   min-width: 0;
   width: 100%;
   height: 100%;
@@ -245,10 +244,6 @@ const gridTemplate = computed(() => {
 }
 .fb-input::placeholder { color: var(--muted-2); }
 .fb-input[type='search']::-webkit-search-cancel-button { cursor: pointer; }
-
-.fb-select { appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 4px; }
-
-.fb-icon { width: 18px; height: 18px; color: var(--muted-2); flex-shrink: 0; }
 
 .fb-control--range { gap: 6px; padding: 0 10px; }
 .fb-date { font-size: 13px; }

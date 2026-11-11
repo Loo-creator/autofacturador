@@ -1,7 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { formatMoney } from '@/utils/formatters'
-import { calcTotales } from '@/utils/formatters'
+import { formatMoney, calcTotales } from '@/utils/formatters'
 const props = defineProps({ conceptos: { type: Array, default: () => [] }, moneda: { type: String, default: 'MXN' } })
 const tot = computed(() => calcTotales(props.conceptos))
 </script>

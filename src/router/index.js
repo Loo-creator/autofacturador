@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 // Auth
@@ -55,8 +55,9 @@ const routes = [
 ]
 
 const router = createRouter({
-  // createWebHistory con la base de Vite: funciona en la raíz y en /<repo>/
-  history: createWebHistory(import.meta.env.BASE_URL),
+  // Hash history funciona con `base: './'` tanto en la raíz como en un subpath
+  // de GitHub Pages (donde createWebHistory recibiría la base inválida '/.').
+  history: createWebHashHistory(),
   routes,
   scrollBehavior() { return { top: 0 } }
 })

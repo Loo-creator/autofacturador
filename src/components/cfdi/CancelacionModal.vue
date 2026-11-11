@@ -4,7 +4,7 @@ import SelectField from '@/components/ui/SelectField.vue'
 import BaseModal from '@/components/ui/BaseModal.vue'
 import { MOTIVOS_CANCELACION } from '@/utils/satCatalogs'
 
-const props = defineProps({ open: Boolean, factura: Object })
+defineProps({ open: Boolean, factura: Object })
 const emit = defineEmits(['close', 'submit'])
 const motivo = ref('02')
 const uuidRelacionado = ref('')

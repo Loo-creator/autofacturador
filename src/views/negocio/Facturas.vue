@@ -3,7 +3,7 @@
  * Vista principal de Facturas del negocio.
  * Layout: FilterBar full-width + ContentView (tabla ⇄ tarjetas) + paginación.
  */
-import { ref, onMounted, computed, onBeforeUnmount } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import SelectField from '@/components/ui/SelectField.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import ScopeBanner from '@/components/ui/ScopeBanner.vue'

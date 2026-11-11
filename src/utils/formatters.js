@@ -42,10 +42,6 @@ export function uuidV4() {
   }).toUpperCase()
 }
 
-export function todayISO() {
-  return new Date().toISOString().slice(0, 10)
-}
-
 export function calcTotales(conceptos = []) {
   let subtotal = 0, descuento = 0, impuestosTrasladados = 0, impuestosRetenidos = 0
   for (const c of conceptos) {
