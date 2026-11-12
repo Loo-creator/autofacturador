@@ -62,7 +62,7 @@ export const facturasSeed = [
  * Cada una trae la información global del período (periodicidad / mes / año)
  * y el detalle de los tickets que consolidó.
  */
-export const facturasGlobalesSeed = [
+const facturasGlobalesSeed = [
   {
     id: 'glob-1', serie: 'GLO', folio: 9001, negocioId: 'neg-1',
     tipo: 'GLOBAL', tipoComprobante: 'I',

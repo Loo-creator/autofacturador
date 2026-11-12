@@ -58,7 +58,7 @@ export async function consultarCsf(rfc, contexto = {}) {
         ok: true,
         nivel: 'warning',
         codigo: 'NO_VERIFICADO',
-        mensaje: 'Este RFC no está en el catálogo de demostración, así que no se pudo verificar contra la CSF. Se conservaron los datos que capturaste: confirma el régimen y la razón social.',
+        mensaje: 'Este RFC no está en el catálogo de demostración, así que no se pudo verificar contra la CSF. Puedes continuar con los datos capturados; revisa que el régimen y la razón social sean correctos.',
         campos: [
           { campo: 'RFC', capturado: r, csf: 'Sin catálogo', coincide: true },
           { campo: 'Razón social', capturado: contexto.razonSocial || '—', csf: 'Sin catálogo', coincide: true },

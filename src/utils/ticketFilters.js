@@ -11,11 +11,15 @@ export const RANGOS_MONTO = [
   { value: '10000-', label: '$10,000 +' },
 ]
 
-export const FORMAS_PAGO = [
-  { value: '01', label: 'Efectivo' },
-  { value: '03', label: 'Transferencia' },
-  { value: '04', label: 'Tarjeta' },
-]
+import { FORMAS_PAGO as FORMAS_PAGO_SAT } from './satCatalogs'
+
+/** Formas de pago que se usan en tickets de venta (subset del catálogo SAT). */
+const CLAVES_FORMA_PAGO_TICKET = ['01', '03', '04']
+const ETIQUETAS_CORTAS = { '01': 'Efectivo', '03': 'Transferencia', '04': 'Tarjeta' }
+
+export const FORMAS_PAGO = FORMAS_PAGO_SAT
+  .filter(f => CLAVES_FORMA_PAGO_TICKET.includes(f.id))
+  .map(f => ({ value: f.id, label: ETIQUETAS_CORTAS[f.id] || f.nombre }))
 
 export const ESTADOS_TICKET = [
   { value: 'disponible', label: 'Por facturar' },

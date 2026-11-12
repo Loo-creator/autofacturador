@@ -83,15 +83,15 @@ watch(() => receptor.regimen, () => {
 })
 
 const ticketCtx = computed(() => ({ ticket: ticket.value, evaluacion: evaluacion.value }))
-const { validaciones: validacionesBase, motivoBloqueo: motivoBase } = useEmision(receptor, ticketCtx, csfValidez)
+const { validaciones: validacionesBase, errores: erroresBase, motivoBloqueo: motivoBase } = useEmision(receptor, ticketCtx, csfValidez)
 
-/** El botón sólo se habilita si NO hay errores fiscales ni del ticket. */
+/** El botón sólo se habilita si NO hay errores fiscales ni del ticket (los avisos no bloquean). */
 const validaciones = computed(() => [
   ...validacion.value.errores.map(e => ({ nivel: 'error', mensaje: e.mensaje })),
   ...validacion.value.avisos.map(a => ({ nivel: 'warning', mensaje: a.mensaje })),
   ...validacionesBase.value,
 ])
-const puedeEmitir = computed(() => validacion.value.ok && validacionesBase.value.length === 0)
+const puedeEmitir = computed(() => validacion.value.ok && erroresBase.value.length === 0)
 const motivoBloqueo = computed(() => {
   if (!validacion.value.ok) return validacion.value.errores[0].mensaje
   return motivoBase.value

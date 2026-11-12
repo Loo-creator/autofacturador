@@ -1,13 +1,11 @@
 <script setup>
-import { reactive, ref, computed, watch } from 'vue'
+import { reactive, computed, watch } from 'vue'
 
 const props = defineProps({
   open: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['close', 'apply', 'clear'])
-
-const applying = ref(false)
 
 const defaultFilters = () => ({
   uuid: '',
@@ -66,18 +64,11 @@ function onClear() {
 }
 
 function onApply() {
-  if (applying.value) return
-  applying.value = true
-  const payload = { ...filters }
-  setTimeout(() => {
-    applying.value = false
-    emit('apply', payload)
-    emit('close')
-  }, 800)
+  emit('apply', { ...filters })
+  emit('close')
 }
 
 function onClose() {
-  if (applying.value) return
   emit('close')
 }
 
@@ -227,16 +218,8 @@ watch(() => props.open, (val) => {
         </div>
 
         <footer class="drawer-footer">
-          <button type="button" class="btn btn-clear" @click="onClear" :disabled="applying">Limpiar</button>
-          <button type="button" class="btn btn-apply" @click="onApply" :disabled="applying">
-            <span class="btn-content" :class="{ hidden: applying }">Aplicar Filtros</span>
-            <span v-if="applying" class="spinner-wrap" aria-label="Aplicando filtros">
-              <svg class="spinner" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <circle class="spinner-track" cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3" />
-                <path class="spinner-head" d="M21 12a9 9 0 00-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
-              </svg>
-            </span>
-          </button>
+          <button type="button" class="btn btn-clear" @click="onClear">Limpiar</button>
+          <button type="button" class="btn btn-apply" @click="onApply">Aplicar Filtros</button>
         </footer>
       </aside>
     </Transition>
@@ -560,19 +543,6 @@ watch(() => props.open, (val) => {
   transition: left 0.5s ease;
 }
 .btn-apply:active:not(:disabled) { transform: scale(0.98); }
-
-.btn-content.hidden { visibility: hidden; }
-.spinner-wrap {
-  position: absolute;
-  inset: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.spinner { width: 20px; height: 20px; animation: spin 0.8s linear infinite; }
-.spinner-track { opacity: 0.35; }
-.spinner-head { opacity: 1; }
-@keyframes spin { to { transform: rotate(360deg); } }
 
 /* Drawer transitions */
 .drawer-fade-enter-active, .drawer-fade-leave-active { transition: opacity 0.3s ease; }

@@ -21,10 +21,6 @@ export function saveDB(db) {
   localStorage.setItem(DB_KEY, JSON.stringify(db))
 }
 
-export function resetDB() {
-  localStorage.removeItem(DB_KEY)
-}
-
 /**
  * Contrato único de toda la capa de datos: { ok, data, error }.
  * `extra` permite añadir metadatos (código de error de negocio, contexto) sin romper
